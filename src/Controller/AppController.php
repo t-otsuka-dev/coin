@@ -37,19 +37,38 @@ class AppController extends Controller
      *
      * @return void
      */
-    public function initialize()
+    public function initialize()/* modify */
     {
         parent::initialize();
-
-        $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
-
+        $this->loadComponent('Auth', [
+                'authorize' => ['Controller'],
+                'loginRedirect' => [
+                    'controller' => 'Users',
+                    'action' => 'index'
+                ],
+                'authError' => 'Did you really think you are allowed to see that?',
+                'authenticate' => [
+                    'Form' => [
+                        'fields' => ['username' => 'mail']    // ログインID対象をmailカラムへ
+                    ]
+                ],
+                'logoutRedirect' => [
+                    'controller' => 'Users',
+                    'action' => 'login'
+                ]
+        ]);
         /*
          * Enable the following components for recommended CakePHP security settings.
          * see http://book.cakephp.org/3.0/en/controllers/components/security.html
          */
         //$this->loadComponent('Security');
         //$this->loadComponent('Csrf');
+    }
+    
+    public function isAuthorized($user) /* add */
+    {
+        return false;
     }
 
     /**
